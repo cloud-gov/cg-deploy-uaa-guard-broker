@@ -26,6 +26,15 @@ jobs:
       path: broker-src-built
       manifest: broker-src-built/manifest.yml
       current_app_name: uaa-guard-broker
+      environment_variables:
+        GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
+        GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
+        GUARD_UAA_URL: {{staging-uaa-url}}
+        GUARD_CLIENT_KEY: {{staging-client-key}}
+        GUARD_CLIENT_SECRET: {{staging-client-secret}}
+        GUARD_BROKER_USERNAME: {{staging-broker-username}}
+        GUARD_BROKER_PASSWORD: {{staging-broker-password}}
+        GUARD_ROUTE_SERVICE_URL: {{staging-broker-service-url}}
   - task: update-broker
     file: pipeline-tasks/register-service-broker.yml
     params:
