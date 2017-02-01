@@ -22,9 +22,6 @@ jobs:
     - get: pipeline-tasks
   - task: build
     file: broker-config/tasks/build.yml
-    params:
-      AUTH_USERNAME: {{staging-auth-name}}
-      AUTH_PASSWORD: {{staging-auth-pass}}
   - put: deploy-uaa-guard-broker-app-staging
     params:
       path: broker-src-built
