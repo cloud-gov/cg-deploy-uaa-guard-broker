@@ -9,8 +9,8 @@ image_resource:
 
 inputs:
 - name: broker-src
-  path: gopath/src/github.com/cloudfoundry-community/cf-uaa-guard-service
+  path: gopath/src/github.com/cloudfoundry-community/cf-uaa-guard-service/proxy
 - name: broker-config
 
 run:
-  path: broker-config/tasks/test.sh
+  path: broker-config/tasks/test-proxy.sh

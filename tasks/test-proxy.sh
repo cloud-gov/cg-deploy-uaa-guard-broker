@@ -7,7 +7,9 @@ export PATH=$PATH:$GOPATH/bin
 
 cd gopath/src/github.com/cloudfoundry-community/cf-uaa-guard-service
 
-# go get github.com/onsi/ginkgo/ginkgo
-# go get github.com/onsi/gomega
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega
 
-# ginkgo -r
+glide install
+
+ginkgo -r

@@ -4,10 +4,11 @@ jobs:
   plan:
   - aggregate:
     - get: broker-src
+      path: proxy
       trigger: true
     - get: broker-config
-  - task: test
-    file: broker-config/tasks/test.yml
+  - task: test-proxy
+    file: broker-config/tasks/test-proxy.yml
 
 - name: push-uaa-guard-broker-staging
   serial: true
