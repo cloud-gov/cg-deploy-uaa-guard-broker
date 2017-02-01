@@ -1,5 +1,13 @@
 ---
 jobs:
+- name: test-uaa-guard-broker
+  plan:
+  - aggregate:
+    - get: broker-src
+      trigger: true
+    - get: broker-config
+  - task: test
+    file: broker-config/tasks/test.yml
 
 - name: push-uaa-guard-broker-staging
   serial: true
