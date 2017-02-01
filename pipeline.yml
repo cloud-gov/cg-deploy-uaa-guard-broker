@@ -4,7 +4,6 @@ jobs:
   plan:
   - aggregate:
     - get: broker-src
-      path: proxy
       trigger: true
     - get: broker-config
   - task: test-proxy
