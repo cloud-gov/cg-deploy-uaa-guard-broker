@@ -7,4 +7,12 @@ venv
 *.pyc
 __pycache__
 docs/_build/
-docs/_build_html/
+docs/_build_html/certs
+
+# Deployment pipeline files
+*secrets.yml
+*.pem
+credentials.yml
+
+# Temporary directory
+tmp/
