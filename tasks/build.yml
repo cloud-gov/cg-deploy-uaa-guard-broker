@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: 18fgsa/concourse-task
+
+inputs:
+- name: broker-src
+- name: broker-config
+
+outputs:
+- name: broker-src-built
+
+run:
+  path: broker-config/tasks/build.sh
