@@ -1,0 +1,95 @@
+---
+jobs:
+
+- name: push-uaa-guard-broker-staging
+  serial: true
+  plan:
+  - aggregate:
+    - get: broker-src
+      passed: [test-uaa-guard-broker]
+      trigger: true
+    - get: broker-config
+      trigger: true
+    - get: pipeline-tasks
+  - task: build
+    file: broker-config/tasks/build.yml
+    params:
+      AUTH_USERNAME: {{staging-auth-name}}
+      AUTH_PASSWORD: {{staging-auth-pass}}
+  - put: deploy-uaa-guard-broker-app-staging
+    params:
+      path: broker-src-built
+      manifest: broker-src-built/manifest.yml
+      current_app_name: uaa-guard-broker
+  - task: update-broker
+    file: pipeline-tasks/register-service-broker.yml
+    params:
+      <<: *staging-cf-creds
+      BROKER_NAME: uaa-guard-broker
+      AUTH_USER: {{staging-auth-name}}
+      AUTH_PASS: {{staging-auth-pass}}
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to deploy uaa-guard-broker on staging
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: {{slack-channel}}
+      username: {{slack-username}}
+      icon_url: {{slack-icon-url}}
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully deployed uaa-guard-broker on staging
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: {{slack-channel}}
+      username: {{slack-username}}
+      icon_url: {{slack-icon-url}}
+
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
+resources:
+- name: broker-src
+  type: git
+  source:
+    uri: {{uaa-guard-broker-app-url}}
+    branch: {{uaa-guard-broker-app-branch}}
+
+- name: broker-config
+  type: git
+  source:
+    uri: {{uaa-guard-broker-config-url}}
+    branch: {{uaa-guard-broker-config-branch}}
+
+- name: pipeline-tasks
+  type: git
+  source:
+    uri: {{pipeline-tasks-git-url}}
+    branch: {{pipeline-tasks-git-branch}}
+
+- name: deploy-uaa-guard-broker-app-staging
+  type: cf
+  source:
+    api: {{staging-cf-api-url}}
+    username: {{staging-cf-username}}
+    password: {{staging-cf-password}}
+    organization: {{staging-cf-organization}}
+    space: {{staging-cf-space}}
+    skip_cert_check: false
+
+- name: slack
+  type: slack-notification
+  source:
+    url: {{slack-webhook-url}}
+
+staging-cf-creds: &staging-cf-creds
+  CF_API_URL: {{staging-cf-api-url}}
+  CF_USERNAME: {{staging-cf-username}}
+  CF_PASSWORD: {{staging-cf-password}}
+  CF_ORGANIZATION: {{staging-cf-organization}}
+  CF_SPACE: {{staging-cf-space}}
