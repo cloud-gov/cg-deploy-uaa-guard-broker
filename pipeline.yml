@@ -6,6 +6,7 @@ jobs:
     - get: broker-src
       trigger: true
     - get: broker-config
+      trigger: true
   - task: test-proxy
     file: broker-config/tasks/test-proxy.yml
 
@@ -17,6 +18,7 @@ jobs:
       passed: [test-uaa-guard-broker]
       trigger: true
     - get: broker-config
+      passed: [test-uaa-guard-broker]
       trigger: true
     - get: pipeline-tasks
   - task: build
