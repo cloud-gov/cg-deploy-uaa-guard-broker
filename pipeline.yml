@@ -34,8 +34,8 @@ jobs:
       GUARD_ROUTE_SERVICE_URL: {{staging-broker-service-url}}
   - put: deploy-uaa-guard-broker-app-staging
     params:
-      path: broker-src
-      manifest: broker-src/manifest.yml
+      path: broker-src-built
+      manifest: broker-src-built/manifest.yml
   - task: update-broker
     file: pipeline-tasks/register-service-broker.yml
     params:

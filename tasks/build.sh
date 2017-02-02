@@ -20,7 +20,12 @@ applications:
       GUARD_CLIENT_SECRET: ${GUARD_CLIENT_SECRET}
 EOF
 
+echo "Copy all source files into built directory"
+
+cp -v broker-src/* broker-src-built/*
+rm -rvf broker-src-built/manifest.yml.sample
+
 echo "Merging in manifest template with secrets"
 
 spruce merge broker-src/manifest.yml.sample \
-             manifest.secret.yml > broker-src/manifest.yml
+             manifest.secret.yml > broker-src-built/manifest.yml
