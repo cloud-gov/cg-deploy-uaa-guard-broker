@@ -22,7 +22,7 @@ EOF
 
 echo "Copy all source files into built directory"
 
-cp -v broker-src/* broker-src-built
+cp -rv broker-src/* broker-src-built
 rm -rvf broker-src-built/manifest.yml.sample
 
 echo "Merging in manifest template with secrets"
