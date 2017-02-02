@@ -32,16 +32,16 @@ jobs:
         GUARD_UAA_URL: {{staging-uaa-url}}
         GUARD_CLIENT_KEY: {{staging-client-key}}
         GUARD_CLIENT_SECRET: {{staging-client-secret}}
-        GUARD_BROKER_USERNAME: {{staging-broker-username}}
-        GUARD_BROKER_PASSWORD: {{staging-broker-password}}
+        GUARD_BROKER_USERNAME: {{staging-broker-name}}
+        GUARD_BROKER_PASSWORD: {{staging-broker-pass}}
         GUARD_ROUTE_SERVICE_URL: {{staging-broker-service-url}}
   - task: update-broker
     file: pipeline-tasks/register-service-broker.yml
     params:
       <<: *staging-cf-creds
       BROKER_NAME: uaa-guard-broker
-      AUTH_USER: {{staging-auth-name}}
-      AUTH_PASS: {{staging-auth-pass}}
+      AUTH_USER: {{staging-broker-name}}
+      AUTH_PASS: {{staging-broker-pass}}
   on_failure:
     put: slack
     params:
