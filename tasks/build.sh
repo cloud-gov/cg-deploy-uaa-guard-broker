@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
- 
+
 cat <<-EOF >> manifest.secret.yml
 applications:
   - name: uaa-guard-broker
@@ -19,4 +19,4 @@ applications:
 EOF
 
 spruce merge broker-src/manifest.yml.sample \
-             manifest.sample.yml
+             manifest.secret.yml > manifest.yml
