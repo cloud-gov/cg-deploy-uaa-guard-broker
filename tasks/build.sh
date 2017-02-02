@@ -2,6 +2,8 @@
 
 set -e
 
+echo "Generating environment variables for Spruce merge"
+
 cat <<-EOF >> manifest.secret.yml
 applications:
   - name: uaa-guard-broker
@@ -18,5 +20,7 @@ applications:
       GUARD_CLIENT_SECRET: ${GUARD_CLIENT_SECRET}
 EOF
 
+echo "Merging in manifest template with secrets"
+
 spruce merge broker-src/manifest.yml.sample \
-             manifest.secret.yml > broker-src-built/manifest.yml
+             manifest.secret.yml > broker-src/manifest.yml

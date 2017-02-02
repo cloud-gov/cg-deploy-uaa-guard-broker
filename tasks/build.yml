@@ -10,8 +10,5 @@ inputs:
 - name: broker-src
 - name: broker-config
 
-outputs:
-- name: broker-src-built
-
 run:
   path: broker-config/tasks/build.sh
