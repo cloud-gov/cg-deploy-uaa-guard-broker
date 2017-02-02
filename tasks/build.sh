@@ -19,4 +19,4 @@ applications:
 EOF
 
 spruce merge broker-src/manifest.yml.sample \
-             manifest.secret.yml > manifest.yml
+             manifest.secret.yml > broker-src-built/manifest.yml
