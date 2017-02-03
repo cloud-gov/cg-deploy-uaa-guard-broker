@@ -34,7 +34,7 @@ jobs:
       passed: [unit-test-uaa-guard-service]
       trigger: true
     - get: pipeline-tasks
-  - put: deploy-uaa-guard-service-service-staging
+  - put: deploy-uaa-guard-service-staging
     params:
       path: broker-src/broker
       app_name: uaa-guard-broker
