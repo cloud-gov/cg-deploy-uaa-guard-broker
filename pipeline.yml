@@ -42,7 +42,7 @@ jobs:
   - put: deploy-uaa-guard-service-staging
     params:
       path: broker-src/broker
-      app_name: uaa-guard-broker
+      current_app_name: uaa-guard-broker
       manifest: broker-src/broker-manifest.yml.sample
       environment_variables:
         GUARD_BROKER_USERNAME: {{staging-broker-name}}
@@ -51,7 +51,7 @@ jobs:
   - put: deploy-uaa-guard-service-staging
     params:
       path: broker-src/proxy
-      app_name: uaa-guard-proxy
+      current_app_name: uaa-guard-proxy
       manifest: broker-src/proxy-manifest.yml.sample
       environment_variables:
         GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
