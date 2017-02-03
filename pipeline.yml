@@ -21,21 +21,26 @@ jobs:
       passed: [test-uaa-guard-broker]
       trigger: true
     - get: pipeline-tasks
-  - task: build
-    file: broker-config/tasks/build.yml
+  - put: deploy-uaa-guard-broker-service-staging
     params:
-      GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
-      GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
-      GUARD_UAA_URL: {{staging-uaa-url}}
-      GUARD_CLIENT_KEY: {{staging-client-key}}
-      GUARD_CLIENT_SECRET: {{staging-client-secret}}
-      GUARD_BROKER_USERNAME: {{staging-broker-name}}
-      GUARD_BROKER_PASSWORD: {{staging-broker-pass}}
-      GUARD_ROUTE_SERVICE_URL: {{staging-broker-service-url}}
-  - put: deploy-uaa-guard-broker-app-staging
+      path: broker-src
+      app_name: uaa-guard-broker
+      manifest: broker-src/manifest.yml.sample
+      environment_variables:
+        GUARD_BROKER_USERNAME: {{staging-broker-name}}
+        GUARD_BROKER_PASSWORD: {{staging-broker-pass}}
+        GUARD_ROUTE_SERVICE_URL: {{staging-broker-proxy-url}}
+  - put: deploy-uaa-guard-broker-service-staging
     params:
-      path: broker-src-built
-      manifest: broker-src-built/manifest.yml
+      path: broker-src
+      app_name: uaa-guard-proxy
+      manifest: broker-src/manifest.yml.sample
+      environment_variables:
+        GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
+        GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
+        GUARD_UAA_URL: {{staging-uaa-url}}
+        GUARD_CLIENT_KEY: {{staging-client-key}}
+        GUARD_CLIENT_SECRET: {{staging-client-secret}}
   - task: update-broker
     file: pipeline-tasks/register-service-broker.yml
     params:
@@ -87,7 +92,7 @@ resources:
     uri: {{pipeline-tasks-git-url}}
     branch: {{pipeline-tasks-git-branch}}
 
-- name: deploy-uaa-guard-broker-app-staging
+- name: deploy-uaa-guard-broker-service-staging
   type: cf
   source:
     api: {{staging-cf-api-url}}
