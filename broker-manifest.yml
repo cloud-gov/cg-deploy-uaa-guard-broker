@@ -1,0 +1,6 @@
+---
+applications:
+  - name: uaa-guard-broker
+    command: broker
+    path: broker
+    memory: 128M

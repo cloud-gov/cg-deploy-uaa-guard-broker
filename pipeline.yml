@@ -43,7 +43,7 @@ jobs:
     params:
       path: broker-src/broker
       current_app_name: uaa-guard-broker
-      manifest: broker-src/broker-manifest.yml.sample
+      manifest: broker-config/broker-manifest.yml
       environment_variables:
         GUARD_BROKER_USERNAME: {{staging-broker-name}}
         GUARD_BROKER_PASSWORD: {{staging-broker-pass}}
@@ -52,7 +52,7 @@ jobs:
     params:
       path: broker-src/proxy
       current_app_name: uaa-guard-proxy
-      manifest: broker-src/proxy-manifest.yml.sample
+      manifest: broker-config/proxy-manifest.yml
       environment_variables:
         GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
         GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
@@ -101,7 +101,7 @@ jobs:
     params:
       path: broker-src/broker
       app_name: uaa-guard-broker
-      manifest: broker-src/broker-manifest.yml.sample
+      manifest: broker-config/broker-manifest.yml
       environment_variables:
         GUARD_BROKER_USERNAME: {{production-broker-name}}
         GUARD_BROKER_PASSWORD: {{production-broker-pass}}
@@ -110,7 +110,7 @@ jobs:
     params:
       path: broker-src/proxy
       app_name: uaa-guard-proxy
-      manifest: broker-src/proxy-manifest.yml.sample
+      manifest: broker-config/proxy-manifest-production.yml
       environment_variables:
         GUARD_COOKIE_SECRET: {{production-cookie-secret}}
         GUARD_DEFAULT_CALLBACK_URL: {{production-callback-url}}
