@@ -1,0 +1,7 @@
+---
+applications:
+  - name: uaa-guard-proxy
+    command: proxy
+    memory: 128M
+    instances: 2
+

@@ -1,43 +1,77 @@
 ---
+groups:
+- name: all
+  jobs:
+  - unit-test-uaa-guard-service
+  - push-uaa-guard-service-staging
+  - push-uaa-guard-service-production
+- name: tests
+  jobs:
+  - unit-test-uaa-guard-service
+  # TODO: Once assertion tests are created
+  #- assertion-tests-uaa-guard-service
+- name: staging
+  jobs:
+  - push-uaa-guard-service-staging
+- name: production
+  jobs:
+  - push-uaa-guard-service-production
+
 jobs:
-- name: test-uaa-guard-broker
+- name: unit-test-uaa-guard-service
   plan:
   - aggregate:
     - get: broker-src
       trigger: true
     - get: broker-config
+      trigger: true
   - task: test-proxy
     file: broker-config/tasks/test-proxy.yml
 
-- name: push-uaa-guard-broker-staging
+- name: push-uaa-guard-service-staging
   serial: true
   plan:
   - aggregate:
     - get: broker-src
-      passed: [test-uaa-guard-broker]
+      passed: [unit-test-uaa-guard-service]
       trigger: true
     - get: broker-config
+      passed: [unit-test-uaa-guard-service]
       trigger: true
     - get: pipeline-tasks
-  - task: build
-    file: broker-config/tasks/build.yml
-  - put: deploy-uaa-guard-broker-app-staging
+  - put: deploy-uaa-guard-service-staging
     params:
-      path: broker-src-built
-      manifest: broker-src-built/manifest.yml
+      path: broker-src/broker
       current_app_name: uaa-guard-broker
+      manifest: broker-config/broker-manifest.yml
+      environment_variables:
+        GUARD_BROKER_USERNAME: {{staging-broker-name}}
+        GUARD_BROKER_PASSWORD: {{staging-broker-pass}}
+        GUARD_ROUTE_SERVICE_URL: {{staging-broker-proxy-url}}
+  - put: deploy-uaa-guard-service-staging
+    params:
+      path: broker-src/proxy
+      current_app_name: uaa-guard-proxy
+      manifest: broker-config/proxy-manifest.yml
+      environment_variables:
+        GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
+        GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
+        GUARD_LOGIN_URL: {{staging-login-url}}
+        GUARD_CLIENT_KEY: {{staging-client-key}}
+        GUARD_CLIENT_SECRET: {{staging-client-secret}}
   - task: update-broker
     file: pipeline-tasks/register-service-broker.yml
     params:
       <<: *staging-cf-creds
       BROKER_NAME: uaa-guard-broker
-      AUTH_USER: {{staging-auth-name}}
-      AUTH_PASS: {{staging-auth-pass}}
+      AUTH_USER: {{staging-broker-name}}
+      AUTH_PASS: {{staging-broker-pass}}
+      CF_FLAGS: --space-scoped
   on_failure:
     put: slack
     params:
       text: |
-        :x: FAILED to deploy uaa-guard-broker on staging
+        :x: FAILED to deploy uaa-guard-service on staging
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: {{slack-channel}}
       username: {{slack-username}}
@@ -46,7 +80,65 @@ jobs:
     put: slack
     params:
       text: |
-        :white_check_mark: Successfully deployed uaa-guard-broker on staging
+        :white_check_mark: Successfully deployed uaa-guard-service on staging
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: {{slack-channel}}
+      username: {{slack-username}}
+      icon_url: {{slack-icon-url}}
+
+- name: push-uaa-guard-service-production
+  serial: true
+  plan:
+  - aggregate:
+    - get: broker-src
+      passed: [unit-test-uaa-guard-service]
+      trigger: true
+    - get: broker-config
+      passed: [unit-test-uaa-guard-service]
+      trigger: true
+    - get: pipeline-tasks
+  - put: deploy-uaa-guard-service-production
+    params:
+      path: broker-src/broker
+      app_name: uaa-guard-broker
+      manifest: broker-config/broker-manifest.yml
+      environment_variables:
+        GUARD_BROKER_USERNAME: {{production-broker-name}}
+        GUARD_BROKER_PASSWORD: {{production-broker-pass}}
+        GUARD_ROUTE_SERVICE_URL: {{production-broker-proxy-url}}
+  - put: deploy-uaa-guard-service-production
+    params:
+      path: broker-src/proxy
+      app_name: uaa-guard-proxy
+      manifest: broker-config/proxy-manifest-production.yml
+      environment_variables:
+        GUARD_COOKIE_SECRET: {{production-cookie-secret}}
+        GUARD_DEFAULT_CALLBACK_URL: {{production-callback-url}}
+        GUARD_LOGIN_URL: {{production-login-url}}
+        GUARD_CLIENT_KEY: {{production-client-key}}
+        GUARD_CLIENT_SECRET: {{production-client-secret}}
+  - task: update-broker
+    file: pipeline-tasks/register-service-broker.yml
+    params:
+      <<: *production-cf-creds
+      BROKER_NAME: uaa-guard-broker
+      AUTH_USER: {{production-broker-name}}
+      AUTH_PASS: {{production-broker-pass}}
+      CF_FLAGS: --space-scoped
+  on_failure:
+    put: slack
+    params:
+      text: |
+        :x: FAILED to deploy uaa-guard-service on production
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: {{slack-channel}}
+      username: {{slack-username}}
+      icon_url: {{slack-icon-url}}
+  on_success:
+    put: slack
+    params:
+      text: |
+        :white_check_mark: Successfully deployed uaa-guard-service on production
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: {{slack-channel}}
       username: {{slack-username}}
@@ -77,7 +169,7 @@ resources:
     uri: {{pipeline-tasks-git-url}}
     branch: {{pipeline-tasks-git-branch}}
 
-- name: deploy-uaa-guard-broker-app-staging
+- name: deploy-uaa-guard-service-staging
   type: cf
   source:
     api: {{staging-cf-api-url}}
@@ -87,10 +179,22 @@ resources:
     space: {{staging-cf-space}}
     skip_cert_check: false
 
+- name: deploy-uaa-guard-service-production
+  type: cf
+  source:
+    api: {{production-cf-api-url}}
+    username: {{production-cf-username}}
+    password: {{production-cf-password}}
+    organization: {{production-cf-organization}}
+    space: {{production-cf-space}}
+    skip_cert_check: false
+
 - name: slack
   type: slack-notification
   source:
     url: {{slack-webhook-url}}
+
+# Anchor CF credentials to be referenced in `register-service-broker` tasks
 
 staging-cf-creds: &staging-cf-creds
   CF_API_URL: {{staging-cf-api-url}}
@@ -98,3 +202,10 @@ staging-cf-creds: &staging-cf-creds
   CF_PASSWORD: {{staging-cf-password}}
   CF_ORGANIZATION: {{staging-cf-organization}}
   CF_SPACE: {{staging-cf-space}}
+
+production-cf-creds: &production-cf-creds
+  CF_API_URL: {{production-cf-api-url}}
+  CF_USERNAME: {{production-cf-username}}
+  CF_PASSWORD: {{production-cf-password}}
+  CF_ORGANIZATION: {{production-cf-organization}}
+  CF_SPACE: {{production-cf-space}}
