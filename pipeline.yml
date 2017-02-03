@@ -38,7 +38,7 @@ jobs:
       environment_variables:
         GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
         GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
-        GUARD_UAA_URL: {{staging-uaa-url}}
+        GUARD_LOGIN_URL: {{staging-login-url}}
         GUARD_CLIENT_KEY: {{staging-client-key}}
         GUARD_CLIENT_SECRET: {{staging-client-secret}}
   - task: update-broker
@@ -48,6 +48,7 @@ jobs:
       BROKER_NAME: uaa-guard-broker
       AUTH_USER: {{staging-broker-name}}
       AUTH_PASS: {{staging-broker-pass}}
+      CF_FLAGS: --space-scoped
   on_failure:
     put: slack
     params:
