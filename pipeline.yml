@@ -23,7 +23,7 @@ jobs:
     - get: pipeline-tasks
   - put: deploy-uaa-guard-broker-service-staging
     params:
-      path: broker-src
+      path: broker-src/broker
       app_name: uaa-guard-broker
       manifest: broker-src/manifest.yml.sample
       environment_variables:
@@ -32,7 +32,7 @@ jobs:
         GUARD_ROUTE_SERVICE_URL: {{staging-broker-proxy-url}}
   - put: deploy-uaa-guard-broker-service-staging
     params:
-      path: broker-src
+      path: broker-src/proxy
       app_name: uaa-guard-proxy
       manifest: broker-src/manifest.yml.sample
       environment_variables:
