@@ -1,5 +1,10 @@
 ---
 groups:
+- name: all
+  jobs:
+  - unit-test-uaa-guard-service
+  - push-uaa-guard-service-staging
+  - push-uaa-guard-service-production
 - name: tests
   jobs:
   - unit-test-uaa-guard-service
