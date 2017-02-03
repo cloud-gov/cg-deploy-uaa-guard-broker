@@ -25,7 +25,7 @@ jobs:
     params:
       path: broker-src/broker
       app_name: uaa-guard-broker
-      manifest: broker-src/manifest.yml.sample
+      manifest: broker-src/broker-manifest.yml.sample
       environment_variables:
         GUARD_BROKER_USERNAME: {{staging-broker-name}}
         GUARD_BROKER_PASSWORD: {{staging-broker-pass}}
@@ -34,7 +34,7 @@ jobs:
     params:
       path: broker-src/proxy
       app_name: uaa-guard-proxy
-      manifest: broker-src/manifest.yml.sample
+      manifest: broker-src/proxy-manifest.yml.sample
       environment_variables:
         GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
         GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
