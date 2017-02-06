@@ -8,8 +8,8 @@ groups:
 - name: tests
   jobs:
   - unit-test-uaa-guard-service
-  # TODO: Once assertion tests are created
-  #- assertion-tests-uaa-guard-service
+  # TODO: Once acceptance tests are created
+  #- acceptance-tests-uaa-guard-service
 - name: staging
   jobs:
   - push-uaa-guard-service-staging
