@@ -100,7 +100,7 @@ jobs:
   - put: deploy-uaa-guard-service-production
     params:
       path: broker-src/broker
-      app_name: uaa-guard-broker
+      current_app_name: uaa-guard-broker
       manifest: broker-config/broker-manifest.yml
       environment_variables:
         GUARD_BROKER_USERNAME: {{production-broker-name}}
@@ -109,7 +109,7 @@ jobs:
   - put: deploy-uaa-guard-service-production
     params:
       path: broker-src/proxy
-      app_name: uaa-guard-proxy
+      current_app_name: uaa-guard
       manifest: broker-config/proxy-manifest-production.yml
       environment_variables:
         GUARD_COOKIE_SECRET: {{production-cookie-secret}}
