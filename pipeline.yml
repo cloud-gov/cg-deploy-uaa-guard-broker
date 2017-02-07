@@ -86,6 +86,15 @@ jobs:
       username: {{slack-username}}
       icon_url: {{slack-icon-url}}
 
+- name: acceptance-tests-staging
+  serial: true
+  plan:
+  - get: broker-src
+    passed: [push-uaa-guard-service-staging]
+    trigger: true
+  - task: acceptance-tests
+    file: broker-src/ci/acceptance-tests.yml
+
 - name: push-uaa-guard-service-production
   serial: true
   plan:
@@ -143,6 +152,15 @@ jobs:
       channel: {{slack-channel}}
       username: {{slack-username}}
       icon_url: {{slack-icon-url}}
+
+- name: acceptance-tests-production
+  serial: true
+  plan:
+  - get: broker-src
+    passed: [push-uaa-guard-service-production]
+    trigger: true
+  - task: acceptance-tests
+    file: broker-src/ci/acceptance-tests.yml
 
 resource_types:
 - name: slack-notification
