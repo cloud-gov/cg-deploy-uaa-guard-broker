@@ -66,6 +66,7 @@ jobs:
       BROKER_NAME: uaa-guard-broker
       AUTH_USER: {{staging-broker-name}}
       AUTH_PASS: {{staging-broker-pass}}
+      SERVICES: "uaa-auth"
   on_failure:
     put: slack
     params:
@@ -123,6 +124,7 @@ jobs:
       BROKER_NAME: uaa-guard-broker
       AUTH_USER: {{production-broker-name}}
       AUTH_PASS: {{production-broker-pass}}
+      SERVICES: "uaa-auth"
   on_failure:
     put: slack
     params:
