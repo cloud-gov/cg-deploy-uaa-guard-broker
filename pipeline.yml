@@ -57,7 +57,7 @@ jobs:
         GUARD_COOKIE_SECRET: {{staging-cookie-secret}}
         GUARD_DEFAULT_CALLBACK_URL: {{staging-callback-url}}
         GUARD_LOGIN_URL: {{staging-login-url}}
-        GUARD_CLIENT_KEY: {{staging-client-key}}
+        GUARD_CLIENT_KEY: uaaproxy
         GUARD_CLIENT_SECRET: {{staging-client-secret}}
   - task: update-broker
     file: pipeline-tasks/register-service-broker.yml
@@ -115,7 +115,7 @@ jobs:
         GUARD_COOKIE_SECRET: {{production-cookie-secret}}
         GUARD_DEFAULT_CALLBACK_URL: {{production-callback-url}}
         GUARD_LOGIN_URL: {{production-login-url}}
-        GUARD_CLIENT_KEY: {{production-client-key}}
+        GUARD_CLIENT_KEY: uaaproxy
         GUARD_CLIENT_SECRET: {{production-client-secret}}
   # - task: update-broker
   #   file: pipeline-tasks/register-service-broker.yml
