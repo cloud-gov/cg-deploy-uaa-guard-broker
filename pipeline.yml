@@ -91,10 +91,10 @@ jobs:
   plan:
   - aggregate:
     - get: broker-src
-      passed: [unit-test-uaa-guard-service]
+      passed: [unit-test-uaa-guard-service, push-uaa-guard-service-staging]
       trigger: true
     - get: broker-config
-      passed: [unit-test-uaa-guard-service]
+      passed: [unit-test-uaa-guard-service, push-uaa-guard-service-staging]
       trigger: true
     - get: pipeline-tasks
   - put: deploy-uaa-guard-service-production
